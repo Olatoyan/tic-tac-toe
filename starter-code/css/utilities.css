@@ -1,0 +1,12 @@
+.active__icon__box {
+  transition: background-color 0.3s;
+  background-color: #a8bfc9;
+  fill: #10212a;
+  border-radius: 1rem;
+}
+
+.think__message {
+  color: #a8bfc9;
+  font-size: rem;
+  text-align: center;
+}

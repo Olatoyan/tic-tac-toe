@@ -12,7 +12,7 @@ body {
   font-family: "Outfit", sans-serif;
   background-color: #1a2a33;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -22,6 +22,8 @@ body {
 .container {
   width: 50rem;
   padding: 2rem;
+  position: relative;
+  /* overflow: hidden; */
 }
 
 .home__section {
@@ -76,6 +78,7 @@ body {
 .icon__o__box {
   /* padding: 1rem; */
   padding: 0.9rem 8rem;
+  cursor: pointer;
 }
 .select__icon__x,
 .select__icon__o {
@@ -86,13 +89,6 @@ body {
   /* z-index: -1; */
 }
 .icon__o__box {
-}
-
-.active__icon__box {
-  transition: background-color 0.3s;
-  background-color: #a8bfc9;
-  fill: #10212a;
-  border-radius: 1rem;
 }
 
 .active__icon__box svg {
@@ -126,6 +122,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.125rem;
   font-weight: 700;
+  cursor: pointer;
 }
 .select__cpu {
   background-color: #f2b137;
@@ -136,9 +133,6 @@ body {
   box-shadow: 0px -8px 0px 0px #118c87 inset;
 }
 
-.home__section {
-  display: none;
-}
 /* ********************* */
 .game__section {
   display: flex;
@@ -201,6 +195,28 @@ body {
   box-shadow: 0px -8px 0px 0px #10212a inset;
   background-color: #1f3641;
   border-radius: 1.5rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.game__tiles::before {
+  content: url(../assets/icon-x-outline.svg);
+  background-position: center;
+  background-size: 50%;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-23%, -24%);
+  height: 100%;
+  width: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.game__tiles:hover::before {
+  opacity: 1;
+  visibility: visible;
 }
 
 .game__tiles__x,
@@ -213,6 +229,13 @@ body {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+/* .game__tiles:hover {
+  background: url(../assets/icon-o-outline.svg), #1f3641;
+
+  background-repeat: no-repeat;
+  background-position: center;
+} */
 
 .game__tiles__o {
   background: url(../assets/icon-o.svg), #1f3641;
@@ -292,7 +315,8 @@ body {
   transition: background-color 0.3s;
 }
 
-.modal__box {
+.modal__box,
+.restart__modal {
   position: fixed;
   display: flex;
   justify-content: center;
@@ -301,8 +325,19 @@ body {
   padding: 4.5rem;
   z-index: 99;
 }
+.restart__modal {
+  padding: 7.7rem;
+}
+/* .modal__box {
+  opacity: 0;
+}
+.restart__modal,
+.overlay {
+  opacity: 0;
+} */
 
-.modal__content {
+.modal__content,
+.restart__container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -330,19 +365,23 @@ body {
 }
 .winner__icon {
 }
-.winner__text {
+.winner__text,
+.restart__game {
   font-size: 4rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.25rem;
 }
-.continue__box {
+.continue__box,
+.restart__game__box {
   display: flex;
   gap: 1.6rem;
 }
 
 .quit__box,
-.next__round {
+.next__round,
+.no__restart,
+.yes__restart {
   padding: 1.5rem 1.7rem;
 
   font-size: 1.6rem;
@@ -352,12 +391,51 @@ body {
   border-radius: 1rem;
 }
 
-.quit__box {
+.quit__box,
+.no__restart {
   background-color: #a8bfc9;
   box-shadow: 0px -4px 0px 0px #6b8997 inset;
 }
 
-.next__round {
+.next__round,
+.yes__restart {
   background-color: #f2b137;
   box-shadow: 0px -4px 0px 0px #cc8b13 inset;
+}
+
+.restart__modal {
+}
+.restart__container {
+  /* display: flex;
+  flex-direction: column;
+  gap: 3rem; */
+}
+.restart__game {
+  color: #a8bfc9;
+}
+.restart__game__box {
+  display: flex;
+}
+.no__restart {
+}
+
+.yes__restart {
+}
+
+.restart__modal,
+.overlay,
+.modal__box {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.home__section {
+  /* opacity: 0;
+  visibility: hidden;
+  */
+  display: none;
+}
+
+.game__section {
+  /* display: none; */
 }

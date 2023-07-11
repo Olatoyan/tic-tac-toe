@@ -19,6 +19,8 @@
 
     <title>Frontend Mentor | Tic Tac Toe</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <script src="script.js" defer></script>
   </head>
 
   <body>
@@ -40,13 +42,13 @@
         <div class="select__box">
           <h1 class="primary__heading">Pick player 1's mark</h1>
           <div class="select__icons">
-            <div class="icon__x__box">
+            <div class="icon__x__box active__icon__box">
               <svg class="select__icon__x">
                 <use xlink:href="assets/icon-x-select.svg#icon-x"></use>
               </svg>
               <!-- <img src="assets/icon-x.svg" alt="icon x" class="select__icon__x" /> -->
             </div>
-            <div class="icon__o__box active__icon__box">
+            <div class="icon__o__box">
               <!-- <img src="assets/icon-o.svg" alt="icon o" class="select__icon__o" /> -->
               <svg class="select__icon__o">
                 <use xlink:href="assets/icon-o-select.svg#icon-o"></use>
@@ -90,11 +92,11 @@
         </header>
 
         <div class="game__container">
-          <div class="game__tiles game__tiles__x"></div>
           <div class="game__tiles"></div>
           <div class="game__tiles"></div>
           <div class="game__tiles"></div>
-          <div class="game__tiles game__tiles__o"></div>
+          <div class="game__tiles"></div>
+          <div class="game__tiles"></div>
           <div class="game__tiles"></div>
           <div class="game__tiles"></div>
           <div class="game__tiles"></div>
@@ -114,6 +116,10 @@
             <p class="o__scores">11</p>
           </div>
         </div>
+        <p class="think__message">
+          Your opponent is thinking
+          <img src="assets/Pulse-1s-200px.svg" alt="" />
+        </p>
       </section>
     </div>
     <div class="modal__box">
@@ -121,7 +127,7 @@
         <p class="win__lose__text">Oh no, you lost</p>
         <div class="winner__text__box">
           <img src="assets/icon-o.svg" alt="winner icon" class="winner__icon" />
-          <h3 class="winner__text winner__o">takes the round</h3>
+          <h2 class="winner__text winner__o">takes the round</h2>
         </div>
         <div class="continue__box">
           <p class="quit__box">quit</p>
@@ -130,6 +136,15 @@
       </div>
     </div>
     <div class="overlay"></div>
+    <div class="restart__modal">
+      <div class="restart__container">
+        <h2 class="restart__game">Restart game?</h2>
+        <div class="restart__game__box">
+          <p class="no__restart">no, cancel</p>
+          <p class="yes__restart">yes, restart</p>
+        </div>
+      </div>
+    </div>
 
     <!-- </div> -->
 
