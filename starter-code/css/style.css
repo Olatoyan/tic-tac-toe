@@ -255,6 +255,12 @@ body {
 .computer-turn .game__tiles {
   cursor: not-allowed;
 }
+.computer-turn .game__tiles:hover::before {
+  content: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 
 /* .game__tiles.game__tiles--filled:hover::before,
 .game__tiles__o:hover::before {

@@ -26,15 +26,21 @@ const restartText = document.querySelector(".restart__game");
 const noRestart = document.querySelector(".no__restart");
 const yesRestart = document.querySelector(".yes__restart");
 const tiedModal = document.querySelector(".tied__modal");
+const tiedContainer = document.querySelector(".tied__container");
 const overlay = document.querySelector(".overlay");
 
 let currentPlayer = "x";
 let userChoice = "x";
 const showThinkingMessage = function () {
   thinkBox.style.display = "flex";
+  gameSection.classList.add("computer-turn");
 
   setTimeout(function () {
     thinkBox.style.display = "none";
+
+    if (currentPlayer === userChoice) {
+      enableCellClicks(); // Enable cell clicks after the thinking message is hidden
+    }
   }, 2000); // Delay for 2 seconds (2000 milliseconds)
 };
 
@@ -58,12 +64,11 @@ const updateGameScoresText = function (xText, oText) {
 };
 
 const updateIconBox = function (e) {
-  iconXBox.classList.remove("active__icon__box");
-  iconOBox.classList.remove("active__icon__box");
-
   const iconBox = e.target;
   if (iconBox.closest(".icon__x__box")) {
     iconBox.closest(".icon__x__box").classList.add("active__icon__box");
+    iconOBox.classList.remove("active__icon__box");
+
     userChoice = "x";
     updateGameScoresText("x (you)", "o (cpu)");
     gameSection.classList.remove("o-choice");
@@ -71,6 +76,8 @@ const updateIconBox = function (e) {
   }
   if (iconBox.closest(".icon__o__box")) {
     iconBox.closest(".icon__o__box").classList.add("active__icon__box");
+    iconXBox.classList.remove("active__icon__box");
+
     userChoice = "o";
     updateGameScoresText("x (cpu)", "o (you)");
     gameSection.classList.add("o-choice");
@@ -106,16 +113,21 @@ const checkWinner = function () {
       } else {
         const lostChoice = userChoice === "x" ? "o" : "x";
         icon = `icon-${lostChoice}.svg`;
-        text = `Oh no, you lost to ${lostChoice.toUpperCase()}…`;
+        text = `Oh no, you lost…`;
         winnerClass = `winner__${lostChoice}`;
       }
+
+      winnerText.classList.remove(`winner__x`, `winner__o`);
       winnerIcon.src = `assets/${icon}`;
       winLoseText.textContent = text;
       winnerText.classList.add(winnerClass);
+      console.log(winnerClass);
       // cells[a].classList.add("winning-tile");
       // cells[b].classList.add("winning-tile");
       // cells[c].classList.add("winning-tile");
-
+      if (currentPlayer !== userChoice) {
+        disableCellClicks();
+      }
       // Show the modal
       showHiddenContainers(modalBox);
       // modalBox.style.opacity = "1";
@@ -141,10 +153,11 @@ const checkWinner = function () {
     updateScores(null);
 
     // Show the modal
-    tiedModal.style.opacity = "1";
-    tiedModal.style.visibility = "visible";
-    tiedModal.style.transform = "translateY(0)";
-    overlay.style.display = "block";
+    // tiedModal.style.opacity = "1";
+    // tiedModal.style.visibility = "visible";
+    // tiedModal.style.transform = "translateY(0)";
+    // overlay.style.display = "block";
+    showHiddenContainers(tiedModal);
 
     console.log("It's a tie!");
 
@@ -176,8 +189,10 @@ const computerMove = function () {
     return;
   }
   showThinkingMessage();
+  disableCellClicks();
 
-  gameSection.classList.add("computer-turn");
+  // gameSection.classList.add("computer-turn");
+  disableCellClicks();
   setTimeout(function () {
     // Generate a random index
     const randomIndex = Math.floor(Math.random() * 9);
@@ -195,7 +210,8 @@ const computerMove = function () {
       // Add the corresponding class to the selected cell
       cells[randomIndex].classList.add(
         `game__tiles__${currentPlayer}`,
-        "game__tiles--filled"
+        "game__tiles--filled",
+        "computer-icon" // Add the "computer-icon" class to indicate the computer's move
       );
 
       // Call the checkWinner function to check if there is a winner
@@ -215,12 +231,146 @@ const computerMove = function () {
       } else if (userChoice === "x" && currentPlayer === "o") {
         computerMove();
       }
+
+      gameSection.classList.remove("computer-turn");
+      enableCellClicks();
     } else {
       // If the selected cell is not empty, try again
       computerMove();
     }
-    gameSection.classList.remove("computer-turn");
+    // gameSection.classList.remove("computer-turn");
+    // enableCellClicks(); // Enable cell clicks after a delay if it's the player's turn
   }, 2000);
+};
+
+const playerMove = function () {
+  if (
+    !this.classList.contains("game__tiles__x") &&
+    !this.classList.contains("game__tiles__o") &&
+    userChoice &&
+    !checkWinner()
+  ) {
+    // Set the background image for the selected cell based on the current player (userChoice)
+    this.style.backgroundImage = `url(assets/icon-${userChoice}.svg)`;
+
+    // Add the corresponding class to the selected cell
+    this.classList.add(`game__tiles__${userChoice}`, "game__tiles--filled");
+
+    // Call the checkWinner function to check if there is a winner
+    if (checkWinner()) return;
+
+    // Switch the current player to the other symbol
+    currentPlayer = userChoice === "x" ? "o" : "x";
+
+    updateTurnDisplay();
+    // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
+    if (userChoice === "o" && currentPlayer === "x") {
+      computerMove();
+    } else if (userChoice === "x" && currentPlayer === "o") {
+      computerMove();
+    }
+  }
+};
+
+// const computerMove = function () {
+//   if (checkWinner()) {
+//     return;
+//   }
+//   showThinkingMessage();
+//   disableCellClicks();
+
+//   gameSection.classList.add("computer-turn");
+//   disableCellClicks();
+//   setTimeout(function () {
+//     // Generate a random index
+//     const randomIndex = Math.floor(Math.random() * 9);
+
+//     // Check if the selected cell is empty
+//     if (
+//       !cells[randomIndex].classList.contains("game__tiles__x") &&
+//       !cells[randomIndex].classList.contains("game__tiles__o")
+//     ) {
+//       // Set the background image for the selected cell based on the current player
+//       cells[
+//         randomIndex
+//       ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
+
+//       // Add the corresponding class to the selected cell
+//       cells[randomIndex].classList.add(
+//         `game__tiles__${currentPlayer}`,
+//         "game__tiles--filled"
+//       );
+
+//       // Call the checkWinner function to check if there is a winner
+//       if (checkWinner()) {
+//         return;
+//       }
+
+//       // Switch the current player to the other symbol
+//       currentPlayer = currentPlayer === "x" ? "o" : "x";
+
+//       // Update the turn display in the game header
+//       updateTurnDisplay();
+
+//       // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
+//       if (userChoice === "o" && currentPlayer === "x") {
+//         computerMove();
+//       } else if (userChoice === "x" && currentPlayer === "o") {
+//         computerMove();
+//       }
+//     } else {
+//       // If the selected cell is not empty, try again
+//       computerMove();
+//     }
+//     gameSection.classList.remove("computer-turn");
+//     enableCellClicks(); // Enable cell clicks after a delay if it's the player's turn
+//     // }
+//   }, 2000);
+// };
+
+// const playerMove = function () {
+//   gameSection.classList.remove("computer-icon");
+//   if (
+//     !this.classList.contains("game__tiles__x") &&
+//     !this.classList.contains("game__tiles__o") &&
+//     userChoice &&
+//     !checkWinner()
+//   ) {
+//     // Set the background image for the selected cell based on the current player (userChoice)
+//     this.style.backgroundImage = `url(assets/icon-${userChoice}.svg)`;
+
+//     // Add the corresponding class to the selected cell
+//     this.classList.add(`game__tiles__${userChoice}`, "game__tiles--filled");
+
+//     // Call the checkWinner function to check if there is a winner
+//     if (checkWinner()) return;
+
+//     // Switch the current player to the other symbol
+//     currentPlayer = userChoice === "x" ? "o" : "x";
+
+//     updateTurnDisplay();
+//     // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
+//     if (userChoice === "o" && currentPlayer === "x") {
+//       computerMove();
+//     } else if (userChoice === "x" && currentPlayer === "o") {
+//       computerMove();
+//     }
+//     gameSection.classList.add("computer-icon");
+//   }
+// };
+
+const disableCellClicks = function () {
+  cells.forEach((cell) => {
+    cell.removeEventListener("click", playerMove);
+  });
+  gameSection.classList.add("computer-turn");
+};
+
+const enableCellClicks = function () {
+  cells.forEach((cell) => {
+    cell.addEventListener("click", playerMove);
+  });
+  gameSection.classList.remove("computer-turn");
 };
 
 const playVsCpu = function (e) {
@@ -247,21 +397,22 @@ const resetGame = function () {
       "game__tiles__o",
       "game__tiles--filled"
     );
-  });
-  // Reset user choice if currentPlayer is not equal to userChoice
-  if (currentPlayer !== userChoice) {
-    userChoice = currentPlayer;
-  }
+  }); // Reset user choice if currentPlayer is not equal to userChoice
+  // if (currentPlayer !== userChoice) {
+  //   userChoice = currentPlayer;
+  // }
 
-  // Update currentPlayer based on userChoice
-  if (userChoice === "o") {
-    currentPlayer = "x";
-    computerMove(); // Computer plays first if userChoice is "o"
-  } else {
-    currentPlayer = "o";
-  }
+  // Set currentPlayer as "x" (user)
+  currentPlayer = "x";
 
   updateTurnDisplay(); // Update turn display
+
+  if (userChoice === "o") {
+    computerMove(); // Computer plays first if userChoice is "o"
+  } else {
+    enableCellClicks(); // Enable cell clicks for the user to play first
+  }
+  // updateTurnDisplay(); // Update turn display
 };
 
 const resetScores = function () {
@@ -284,7 +435,7 @@ const showHiddenContainers = function (container) {
 const hideContainers = function (container) {
   container.style.opacity = "0";
   container.style.visibility = "hidden";
-  container.style.transform = "translateY(100)";
+  container.style.transform = "translateY(100%)";
   overlay.style.display = "none";
 };
 
@@ -327,6 +478,24 @@ restartContainer.addEventListener("click", function (e) {
   }
 });
 
+tiedContainer.addEventListener("click", function (e) {
+  const quit = e.target.classList.contains("quit__box");
+  const nextRound = e.target.classList.contains("next__round");
+
+  if (quit) {
+    resetGame();
+    resetScores();
+    gameSection.style.display = "none";
+    homeSection.style.display = "flex";
+    hideContainers(tiedModal);
+  }
+
+  if (nextRound) {
+    resetGame();
+    hideContainers(tiedModal);
+  }
+});
+
 ///////////////////////
 // EVENT LISTENERS
 
@@ -335,32 +504,5 @@ selectIconBox.addEventListener("click", updateIconBox);
 vsCpu.addEventListener("click", playVsCpu);
 
 cells.forEach((cell, i) => {
-  cell.addEventListener("click", function () {
-    if (
-      !cell.classList.contains("game__tiles__x") &&
-      !cell.classList.contains("game__tiles__o") &&
-      userChoice &&
-      !checkWinner()
-    ) {
-      // Set the background image for the selected cell based on the current player (userChoice)
-      cell.style.backgroundImage = `url(assets/icon-${userChoice}.svg)`;
-
-      // Add the corresponding class to the selected cell
-      cell.classList.add(`game__tiles__${userChoice}`, "game__tiles--filled");
-
-      // Call the checkWinner function to check if there is a winner
-      if (checkWinner()) return;
-
-      // Switch the current player to the other symbol
-      currentPlayer = userChoice === "x" ? "o" : "x";
-
-      updateTurnDisplay();
-      // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
-      if (userChoice === "o" && currentPlayer === "x") {
-        computerMove();
-      } else if (userChoice === "x" && currentPlayer === "o") {
-        computerMove();
-      }
-    }
-  });
+  cell.addEventListener("click", playerMove);
 });
