@@ -4,6 +4,7 @@ const vsCpu = document.querySelector(".select__cpu");
 const vsPlayer = document.querySelector(".select__player");
 const homeSection = document.querySelector(".home__section");
 const gameSection = document.querySelector(".game__section");
+const restartBox = document.querySelector(".restart__box");
 
 const iconXBox = document.querySelector(".icon__x__box");
 const iconOBox = document.querySelector(".icon__o__box");
@@ -11,6 +12,7 @@ const activeIconBox = document.querySelectorAll(".active__icon__box");
 const cells = document.querySelectorAll(".game__tiles");
 const thinkBox = document.querySelector(".think__box");
 const modalBox = document.querySelector(".modal__box");
+const modalContent = document.querySelector(".modal__content");
 const winLoseText = document.querySelector(".win__lose__text");
 const winnerIcon = document.querySelector(".winner__icon");
 const winnerText = document.querySelector(".winner__text");
@@ -19,12 +21,15 @@ const xScores = document.querySelector(".x__scores");
 const oScores = document.querySelector(".o__scores");
 const tiesScores = document.querySelector(".ties__score");
 const restartModal = document.querySelector(".restart__modal");
+const restartContainer = document.querySelector(".restart__container");
 const restartText = document.querySelector(".restart__game");
 const noRestart = document.querySelector(".no__restart");
 const yesRestart = document.querySelector(".yes__restart");
 const tiedModal = document.querySelector(".tied__modal");
 const overlay = document.querySelector(".overlay");
 
+let currentPlayer = "x";
+let userChoice = "x";
 const showThinkingMessage = function () {
   thinkBox.style.display = "flex";
 
@@ -33,8 +38,6 @@ const showThinkingMessage = function () {
   }, 2000); // Delay for 2 seconds (2000 milliseconds)
 };
 
-let currentPlayer = "x";
-let userChoice = "x";
 const updateTurnDisplay = function () {
   displayTurnBox.innerHTML = `
     <svg class="select__turn__${currentPlayer ? currentPlayer : "x"}">
@@ -46,7 +49,15 @@ const updateTurnDisplay = function () {
   `;
 };
 
-const updateIconDisplay = function (e) {
+const updateGameScoresText = function (xText, oText) {
+  const xPersonElem = document.querySelector(".x__name");
+  const oPersonElem = document.querySelector(".o__name");
+
+  xPersonElem.textContent = xText;
+  oPersonElem.textContent = oText;
+};
+
+const updateIconBox = function (e) {
   iconXBox.classList.remove("active__icon__box");
   iconOBox.classList.remove("active__icon__box");
 
@@ -54,12 +65,14 @@ const updateIconDisplay = function (e) {
   if (iconBox.closest(".icon__x__box")) {
     iconBox.closest(".icon__x__box").classList.add("active__icon__box");
     userChoice = "x";
+    updateGameScoresText("x (you)", "o (cpu)");
     gameSection.classList.remove("o-choice");
     gameSection.classList.add("x-choice");
   }
   if (iconBox.closest(".icon__o__box")) {
     iconBox.closest(".icon__o__box").classList.add("active__icon__box");
     userChoice = "o";
+    updateGameScoresText("x (cpu)", "o (you)");
     gameSection.classList.add("o-choice");
     gameSection.classList.remove("x-choice");
   }
@@ -99,12 +112,16 @@ const checkWinner = function () {
       winnerIcon.src = `assets/${icon}`;
       winLoseText.textContent = text;
       winnerText.classList.add(winnerClass);
+      // cells[a].classList.add("winning-tile");
+      // cells[b].classList.add("winning-tile");
+      // cells[c].classList.add("winning-tile");
 
       // Show the modal
-      modalBox.style.opacity = "1";
-      modalBox.style.visibility = "visible";
-      modalBox.style.transform = "translateY(0)";
-      overlay.style.display = "block";
+      showHiddenContainers(modalBox);
+      // modalBox.style.opacity = "1";
+      // modalBox.style.visibility = "visible";
+      // // modalBox.style.transform = "translateY(0)";
+      // overlay.style.display = "block";
 
       return true;
     }
@@ -160,6 +177,7 @@ const computerMove = function () {
   }
   showThinkingMessage();
 
+  gameSection.classList.add("computer-turn");
   setTimeout(function () {
     // Generate a random index
     const randomIndex = Math.floor(Math.random() * 9);
@@ -201,6 +219,7 @@ const computerMove = function () {
       // If the selected cell is not empty, try again
       computerMove();
     }
+    gameSection.classList.remove("computer-turn");
   }, 2000);
 };
 
@@ -218,9 +237,100 @@ const playVsCpu = function (e) {
   }
 };
 
-// console.log(selectIconBox);
+const resetGame = function () {
+  // Reset game container to initial state
+  // currentPlayer = userChoice === "x" ? "o" : "x"; // Preserve the user's choice
+  cells.forEach((cell) => {
+    cell.style.backgroundImage = "";
+    cell.classList.remove(
+      "game__tiles__x",
+      "game__tiles__o",
+      "game__tiles--filled"
+    );
+  });
+  // Reset user choice if currentPlayer is not equal to userChoice
+  if (currentPlayer !== userChoice) {
+    userChoice = currentPlayer;
+  }
 
-selectIconBox.addEventListener("click", updateIconDisplay);
+  // Update currentPlayer based on userChoice
+  if (userChoice === "o") {
+    currentPlayer = "x";
+    computerMove(); // Computer plays first if userChoice is "o"
+  } else {
+    currentPlayer = "o";
+  }
+
+  updateTurnDisplay(); // Update turn display
+};
+
+const resetScores = function () {
+  // Reset scores
+  const xScores = document.querySelector(".x__scores");
+  const oScores = document.querySelector(".o__scores");
+  const tiesScore = document.querySelector(".ties__score");
+  xScores.textContent = "0";
+  oScores.textContent = "0";
+  tiesScore.textContent = "0";
+};
+
+const showHiddenContainers = function (container) {
+  container.style.opacity = "1";
+  container.style.visibility = "visible";
+  container.style.transform = "translateY(0)";
+  overlay.style.display = "block";
+};
+
+const hideContainers = function (container) {
+  container.style.opacity = "0";
+  container.style.visibility = "hidden";
+  container.style.transform = "translateY(100)";
+  overlay.style.display = "none";
+};
+
+modalContent.addEventListener("click", function (e) {
+  const quitGame = e.target.classList.contains("quit__box");
+  const nextRound = e.target.classList.contains("next__round");
+
+  if (quitGame) {
+    resetGame();
+    resetScores(); // Reset scores
+    gameSection.style.display = "none";
+    homeSection.style.display = "flex";
+    hideContainers(modalBox);
+    // modalBox.style.opacity = "0";
+    // modalBox.style.visibility = "hidden";
+    // modalBox.style.transform = "translateY(100)";
+  }
+
+  if (nextRound) {
+    resetGame();
+    hideContainers(modalBox);
+  }
+});
+
+restartBox.addEventListener("click", function () {
+  showHiddenContainers(restartModal);
+});
+
+restartContainer.addEventListener("click", function (e) {
+  const noRestart = e.target.classList.contains("no__restart");
+  const yesRestart = e.target.classList.contains("yes__restart");
+
+  if (noRestart) {
+    hideContainers(restartModal);
+  }
+
+  if (yesRestart) {
+    resetGame();
+    hideContainers(restartModal);
+  }
+});
+
+///////////////////////
+// EVENT LISTENERS
+
+selectIconBox.addEventListener("click", updateIconBox);
 
 vsCpu.addEventListener("click", playVsCpu);
 

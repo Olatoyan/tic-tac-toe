@@ -47,3 +47,10 @@
     transform: rotate(0.5turn);
   }
 }
+
+.winning-tile {
+  background-color: #f2b137;
+}
+.winning-tile {
+  background-color: #31c3bd;
+}
