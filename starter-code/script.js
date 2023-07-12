@@ -9,6 +9,23 @@ const iconXBox = document.querySelector(".icon__x__box");
 const iconOBox = document.querySelector(".icon__o__box");
 const activeIconBox = document.querySelectorAll(".active__icon__box");
 const cells = document.querySelectorAll(".game__tiles");
+const thinkBox = document.querySelector(".think__box");
+const modalBox = document.querySelector(".modal__box");
+const winLoseText = document.querySelector(".win__lose__text");
+const winnerIcon = document.querySelector(".winner__icon");
+const winnerText = document.querySelector(".winner__text");
+const displayTurnBox = document.querySelector(".display__turn__box");
+const xScores = document.querySelector(".x__scores");
+const oScores = document.querySelector(".o__scores");
+const tiesScores = document.querySelector(".ties__score");
+
+const showThinkingMessage = function () {
+  thinkBox.style.display = "flex";
+
+  setTimeout(function () {
+    thinkBox.style.display = "none";
+  }, 2000); // Delay for 2 seconds (2000 milliseconds)
+};
 
 // console.log(selectIconBox);
 
@@ -35,28 +52,49 @@ vsCpu.addEventListener("click", function (e) {
 let currentPlayer = "x";
 
 const computerMove = function () {
-  // Generate a random index
-  const randomIndex = Math.floor(Math.random() * 9);
-
-  // Check if the selected cell is empty
-  if (
-    !cells[randomIndex].classList.contains("game__tiles__x") &&
-    !cells[randomIndex].classList.contains("game__tiles__o")
-  ) {
-    // Set the background image for the selected cell based on the current player
-    cells[
-      randomIndex
-    ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
-
-    // Add the corresponding class to the selected cell
-    cells[randomIndex].classList.add(`game__tiles__${currentPlayer}`);
-
-    // Switch the current player to the other symbol
-    currentPlayer = currentPlayer === "x" ? "o" : "x";
-  } else {
-    // If the selected cell is not empty, try again
-    computerMove();
+  if (checkWinner()) {
+    return;
   }
+  showThinkingMessage();
+
+  setTimeout(function () {
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * 9);
+
+    // Check if the selected cell is empty
+    if (
+      !cells[randomIndex].classList.contains("game__tiles__x") &&
+      !cells[randomIndex].classList.contains("game__tiles__o")
+    ) {
+      // Set the background image for the selected cell based on the current player
+      cells[
+        randomIndex
+      ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
+
+      // Add the corresponding class to the selected cell
+      cells[randomIndex].classList.add(
+        `game__tiles__${currentPlayer}`,
+        "game__tiles--filled"
+      );
+      // Call the checkWinner function to check if there is a winner
+      if (checkWinner()) {
+        return;
+      }
+      // Switch the current player to the other symbol
+      currentPlayer = currentPlayer === "x" ? "o" : "x";
+
+      // Update the turn display in the game header
+      displayTurnBox.innerHTML = `
+         <svg class="select__turn__${currentPlayer}">
+           <use xlink:href="assets/icon-${currentPlayer}-select.svg#icon-${currentPlayer}"></use>
+         </svg>
+         <p class="turn__name">turn</p>
+       `;
+    } else {
+      // If the selected cell is not empty, try again
+      computerMove();
+    }
+  }, 2000);
 };
 
 cells.forEach((cell, i) => {
@@ -64,16 +102,25 @@ cells.forEach((cell, i) => {
     if (
       !cell.classList.contains("game__tiles__x") &&
       !cell.classList.contains("game__tiles__o") &&
-      currentPlayer === "x"
+      currentPlayer === "x" &&
+      !checkWinner()
     ) {
       // Set the background image for the selected cell to "x"
       cell.style.backgroundImage = "url(assets/icon-x.svg)";
 
       // Add the corresponding class to the selected cell
-      cell.classList.add("game__tiles__x");
 
+      cell.classList.add("game__tiles__x", "game__tiles--filled");
+      // Call the checkWinner function to check if there is a winner
+      if (checkWinner()) return;
       // Switch the current player to "o"
       currentPlayer = "o";
+      displayTurnBox.innerHTML = `
+                <svg class="select__turn__${currentPlayer}">
+                  <use xlink:href="assets/icon-${currentPlayer}-select.svg#icon-${currentPlayer}"></use>
+                </svg>
+                <p class="turn__name">turn</p>
+    `;
 
       // Call the computer's move function
       computerMove();
@@ -81,138 +128,84 @@ cells.forEach((cell, i) => {
   });
 });
 
-// JavaScript code for the Tic-Tac-Toe game
-// gameSection.addEventListener("click", function () {
-//   const cells = document.querySelectorAll(".game__tiles");
+const updateScores = function (winner) {
+  let xScore = parseInt(xScores.textContent);
+  let oScore = parseInt(oScores.textContent);
+  let tiesScore = parseInt(tiesScores.textContent);
 
-//   // Game state
-//   const gameState = {
-//     board: ["", "", "", "", "", "", "", "", ""],
-//     currentPlayer: "X",
-//     scores: {
-//       X: 0,
-//       O: 0,
-//       ties: 0,
-//     },
-//   };
-//   console.log(gameState);
+  if (winner === "x") {
+    xScore += 1;
+  } else if (winner === "o") {
+    oScore += 1;
+  } else {
+    tiesScore += 1;
+  }
 
-//   // Get game board cells
+  xScores.textContent = xScore;
+  oScores.textContent = oScore;
+  tiesScores.textContent = tiesScore;
+};
 
-//   // Add event listeners to game board cells
-//   cells.forEach(function (cell, index) {
-//     cell.addEventListener("click", function () {
-//       if (gameState.board[index] === "" && !isGameOver(gameState)) {
-//         // Update game state
-//         gameState.board[index] = gameState.currentPlayer;
+const winningCombinations = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8], // Rows
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8], // Columns
+  [0, 4, 8],
+  [2, 4, 6], // Diagonals
+];
 
-//         // Update game board UI
-//         cell.classList.add("game__tiles__x");
+const checkWinner = function () {
+  for (const combination of winningCombinations) {
+    const [a, b, c] = combination;
+    if (
+      cells[a].classList.contains(`game__tiles__${currentPlayer}`) &&
+      cells[b].classList.contains(`game__tiles__${currentPlayer}`) &&
+      cells[c].classList.contains(`game__tiles__${currentPlayer}`)
+    ) {
+      updateScores(currentPlayer);
+      let icon, text, winnerClass;
+      if (currentPlayer === "x") {
+        icon = "icon-x.svg";
+        text = "You won";
+        winnerClass = "winner__x";
+      } else {
+        icon = "icon-o.svg";
+        text = "Oh no, you lost…";
+        winnerClass = "winner__o";
+      }
+      winnerIcon.src = `assets/${icon}`;
+      winLoseText.textContent = text;
+      winnerText.classList.add(winnerClass);
 
-//         // Check for a win or tie
-//         if (isGameOver(gameState)) {
-//           var winner = getWinner(gameState);
-//           if (winner === "X" || winner === "O") {
-//             gameState.scores[winner]++;
-//           } else {
-//             gameState.scores.ties++;
-//           }
-//           updateScoresUI();
-//           setTimeout(resetGame, 1000);
-//         } else {
-//           // Switch to the next player
-//           gameState.currentPlayer = gameState.currentPlayer === "X" ? "O" : "X";
+      // Show the modal
+      modalBox.style.opacity = "1";
+      modalBox.style.visibility = "visible";
+      modalBox.style.transform = "translateY(0)";
 
-//           // Let the computer make its move
-//           setTimeout(computerMove, 1000);
-//         }
-//       }
-//     });
-//   });
+      return true;
+    }
+  }
 
-//   // Computer's move
-//   function computerMove() {
-//     // Randomly select an empty cell for the computer's move
-//     var emptyCells = gameState.board.reduce(function (acc, value, index) {
-//       if (value === "") {
-//         acc.push(index);
-//       }
-//       return acc;
-//     }, []);
-//     var randomIndex = Math.floor(Math.random() * emptyCells.length);
-//     var computerIndex = emptyCells[randomIndex];
+  // No winner found, check if it's a tie
+  const isBoardFull = Array.from(cells).every((cell) => {
+    return (
+      cell.classList.contains("game__tiles__x") ||
+      cell.classList.contains("game__tiles__o")
+    );
+  });
 
-//     // Update game state
-//     gameState.board[computerIndex] = gameState.currentPlayer;
+  if (isBoardFull) {
+    // It's a tie
+    // Perform any necessary actions for a tie game
+    updateScores(null);
 
-//     // Update game board UI
-//     cells[computerIndex].classList.add("game__tiles__o");
+    console.log("It's a tie!");
 
-//     // Check for a win or tie
-//     if (isGameOver(gameState)) {
-//       var winner = getWinner(gameState);
-//       if (winner === "X" || winner === "O") {
-//         gameState.scores[winner]++;
-//       } else {
-//         gameState.scores.ties++;
-//       }
-//       updateScoresUI();
-//       setTimeout(resetGame, 1000);
-//     } else {
-//       // Switch to the next player
-//       gameState.currentPlayer = gameState.currentPlayer === "X" ? "O" : "X";
-//     }
-//   }
+    return true;
+  }
 
-//   // Check if the game is over (win or tie)
-//   function isGameOver(state) {
-//     return (
-//       getWinner(state) ||
-//       state.board.every(function (cell) {
-//         return cell !== "";
-//       })
-//     );
-//   }
-
-//   // Get the winner of the game
-//   function getWinner(state) {
-//     var winningCombos = [
-//       [0, 1, 2],
-//       [3, 4, 5],
-//       [6, 7, 8], // Rows
-//       [0, 3, 6],
-//       [1, 4, 7],
-//       [2, 5, 8], // Columns
-//       [0, 4, 8],
-//       [2, 4, 6], // Diagonals
-//     ];
-//     for (var i = 0; i < winningCombos.length; i++) {
-//       var [a, b, c] = winningCombos[i];
-//       if (
-//         state.board[a] &&
-//         state.board[a] === state.board[b] &&
-//         state.board[a] === state.board[c]
-//       ) {
-//         return state.board[a];
-//       }
-//     }
-//     return null;
-//   }
-
-//   // Update scores UI
-//   function updateScoresUI() {
-//     // Update scores display with the values from gameState.scores
-//   }
-
-//   // Reset the game state and UI
-//   function resetGame() {
-//     // Clear the game board
-//     cells.forEach(function (cell) {
-//       cell.textContent = "";
-//     });
-
-//     // Reset the game state
-//     gameState.board = ["", "", "", "", "", "", "", "", ""];
-//     gameState.currentPlayer = "X";
-//   }
-// });
+  return false;
+};

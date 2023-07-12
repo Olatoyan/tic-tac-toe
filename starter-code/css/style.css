@@ -160,7 +160,8 @@ body {
   border-radius: 1rem;
   box-shadow: 0px -4px 0px 0px #10212a inset;
 }
-.select__turn__x {
+.select__turn__x,
+.select__turn__o {
   width: 2rem;
   height: 2rem;
   fill: #a8bfc9;
@@ -219,6 +220,10 @@ body {
   visibility: visible;
 }
 
+.game__tiles.game__tiles--filled:hover::before {
+  opacity: 0;
+  visibility: hidden;
+}
 .game__tiles__x,
 .game__tiles__o {
   background-size: 50%;
@@ -324,6 +329,8 @@ body {
   width: 100%;
   padding: 4.5rem;
   z-index: 99;
+  transition: all 0.6s;
+  transform: translateY(100%);
 }
 .restart__modal {
   padding: 7.7rem;
