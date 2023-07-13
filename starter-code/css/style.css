@@ -12,7 +12,6 @@ body {
   font-family: "Outfit", sans-serif;
   background-color: #1a2a33;
   display: flex;
-  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -23,7 +22,6 @@ body {
   max-width: 50rem;
   padding: 2rem;
   position: relative;
-  /* overflow: hidden; */
 }
 
 .home__section {
@@ -37,14 +35,9 @@ body {
   gap: 1rem;
 }
 .main__icons {
-  /* width: 100%; */
   height: 3.2rem;
 }
-.main__x__icon {
-}
 
-.main__o__icon {
-}
 /* ****************************** */
 .select__box {
   padding: 3rem;
@@ -72,11 +65,9 @@ body {
   border-radius: 1rem;
 
   padding: 1.3rem;
-  /* justify-content: space-around; */
 }
 .icon__x__box,
 .icon__o__box {
-  /* padding: 1rem; */
   padding: 0.9rem 8rem;
   cursor: pointer;
 }
@@ -85,16 +76,10 @@ body {
   width: 3.2rem;
   height: 3.2rem;
   fill: #a8bfc9;
-  /* padding: 1rem 3rem; */
-  /* z-index: -1; */
-}
-.icon__o__box {
 }
 
 .active__icon__box svg {
   fill: #10212a;
-}
-.select__icon__o {
 }
 
 .reminder {
@@ -122,6 +107,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.125rem;
   font-weight: 700;
+  transition: background-color 0.4s;
+
   cursor: pointer;
 }
 .select__cpu {
@@ -130,6 +117,10 @@ body {
 }
 .select__player {
   background-color: #31c3bd;
+  box-shadow: 0px -8px 0px 0px #118c87 inset;
+}
+.select__player:hover {
+  background-color: #65e9e4;
   box-shadow: 0px -8px 0px 0px #118c87 inset;
 }
 
@@ -151,10 +142,6 @@ body {
 }
 
 .game__header {
-  /* display: flex;
-  justify-content: space-between;
-  ; */
-
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
@@ -272,13 +259,6 @@ body {
   pointer-events: none;
 }
 
-/* .game__tiles.game__tiles--filled:hover::before,
-.game__tiles__o:hover::before {
-  opacity: 0;
-  visibility: hidden;
-  cursor: not-allowed;
-} */
-
 .game__tiles__x,
 .game__tiles__o {
   background-size: 50%;
@@ -333,29 +313,12 @@ body {
   background: #31c3bd;
 }
 
-.x__name {
-}
-
-.x__person {
-}
-.x__scores {
-}
 .ties__box {
   background: #a8bfc9;
 }
-.ties__name {
-}
-.ties__score {
-}
+
 .o__box {
   background: #f2b137;
-}
-.o__name {
-}
-.o__person {
-}
-
-.o__scores {
 }
 
 /* *************************** */
@@ -387,13 +350,6 @@ body {
 .tied__modal {
   padding: 7.7rem;
 }
-/* .modal__box {
-  opacity: 0;
-}
-.restart__modal,
-.overlay {
-  opacity: 0;
-} */
 
 .modal__content,
 .restart__container,
@@ -451,11 +407,17 @@ body {
   text-transform: uppercase;
   font-weight: 700;
   border-radius: 1rem;
+  transition: background-color 0.4s;
 }
 
 .quit__box,
 .no__restart {
   background-color: #a8bfc9;
+  box-shadow: 0px -4px 0px 0px #6b8997 inset;
+}
+.quit__box:hover,
+.no__restart:hover {
+  background-color: #dbe8ed;
   box-shadow: 0px -4px 0px 0px #6b8997 inset;
 }
 
@@ -465,13 +427,13 @@ body {
   box-shadow: 0px -4px 0px 0px #cc8b13 inset;
 }
 
-.restart__modal {
+.next__round:hover,
+.yes__restart:hover,
+.select__cpu:hover {
+  background-color: #ffc860;
+  box-shadow: 0px -4px 0px 0px #cc8b13 inset;
 }
-.restart__container {
-  /* display: flex;
-  flex-direction: column;
-  gap: 3rem; */
-}
+
 .restart__game,
 .tied__game {
   color: #a8bfc9;
@@ -480,24 +442,12 @@ body {
 .tied__game__box {
   display: flex;
 }
-.no__restart {
-}
-
-.yes__restart {
-}
 
 .restart__modal,
 .modal__box,
 .tied__modal {
   opacity: 0;
   visibility: hidden;
-}
-
-.home__section {
-  /* opacity: 0;
-  visibility: hidden;
-  */
-  /* display: none; */
 }
 
 .game__section {
