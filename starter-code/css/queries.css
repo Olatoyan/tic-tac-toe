@@ -1,0 +1,104 @@
+@media (max-width: 31.25em) {
+  .icon__x__box,
+  .icon__o__box {
+    padding: 0.9rem 5rem;
+  }
+
+  .select__cpu,
+  .select__player {
+    padding: 2.1rem 5rem;
+  }
+
+  .x__box,
+  .ties__box,
+  .o__box {
+    padding: 1.3rem 2rem;
+  }
+
+  .game__tiles {
+    width: 9.6rem;
+    height: 9.6rem;
+  }
+  .win__lose__text {
+    font-size: 1.4rem;
+    letter-spacing: 0.0875rem;
+  }
+  .winner__text,
+  .restart__game,
+  .tied__game {
+    font-size: 2.4rem;
+    letter-spacing: 0.15rem;
+  }
+  .modal__box,
+  .restart__modal,
+  .tied__modal {
+    padding: 3.5rem;
+    z-index: 99;
+  }
+  .restart__modal,
+  .tied__modal {
+    padding: 4rem 2rem;
+  }
+  .winner__icon {
+    height: 2.8rem;
+    width: 2.8rem;
+  }
+
+  .display__turn__box,
+  .restart__box {
+    padding: 1rem 1.5rem;
+  }
+  .select__turn__x,
+  .select__turn__o,
+  .select__restart {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .turn__name {
+    font-size: 1.4rem;
+    letter-spacing: 0.0875rem;
+  }
+
+  .main__icons {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+@media (max-width: 25em) {
+  .icon__x__box,
+  .icon__o__box {
+    padding: 0.9rem 3rem;
+  }
+
+  .select__cpu,
+  .select__player {
+    padding: 2.1rem 2rem;
+  }
+  .x__box,
+  .ties__box,
+  .o__box {
+    padding: 1rem;
+  }
+  .game__tiles__x,
+  .game__tiles__o {
+    background-size: 40%;
+  }
+
+  /* 
+  .game__tiles {
+    width: 9.6rem;
+    height: 9.6rem;
+  } */
+}
+@media (max-width: 21.875em) {
+  .game__tiles {
+    width: 8.6rem;
+    height: 8.6rem;
+  }
+  .winner__text,
+  .restart__game,
+  .tied__game {
+    font-size: 1.9rem;
+    letter-spacing: 0.15rem;
+  }
+}

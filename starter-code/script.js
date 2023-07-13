@@ -270,7 +270,7 @@ const updateScores = function (winner) {
 
 const playVsCpu = function (e) {
   homeSection.style.display = "none";
-  gameSection.style.display = "flex";
+  gameSection.style.display = "grid";
 
   currentPlayer = userChoice === "x" ? "o" : "x"; // Set the current player based on the user's choice
 
@@ -373,7 +373,7 @@ const playerMove = function () {
 
 const playVsPlayer = function () {
   homeSection.style.display = "none";
-  gameSection.style.display = "flex";
+  gameSection.style.display = "grid";
 
   currentPlayer = "x"; // Set the current player as "x" by default
   updateTurnDisplay(); // Update the turn display in the game header

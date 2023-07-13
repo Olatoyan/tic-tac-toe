@@ -20,7 +20,7 @@ body {
 }
 
 .container {
-  width: 50rem;
+  max-width: 50rem;
   padding: 2rem;
   position: relative;
   /* overflow: hidden; */
@@ -138,6 +138,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 3rem;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.game__header,
+.game__container,
+.game__scores,
+.think__box {
+  grid-column: 1/-1;
 }
 
 .game__header {
@@ -413,8 +423,7 @@ body {
 .winner__x {
   color: #31c3bd;
 }
-.winner__icon {
-}
+
 .winner__text,
 .restart__game,
 .tied__game {
