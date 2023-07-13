@@ -63,6 +63,10 @@
     width: 2.5rem;
     height: 2.5rem;
   }
+  .game__tiles:hover::before {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 @media (max-width: 25em) {
   .icon__x__box,

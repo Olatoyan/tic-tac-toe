@@ -41,9 +41,9 @@ const showThinkingMessage = function () {
     thinkBox.style.display = "none";
 
     if (currentPlayer === userChoice) {
-      enableCellClicks(); // Enable cell clicks after the thinking message is hidden
+      enableCellClicks();
     }
-  }, 2000); // Delay for 2 seconds (2000 milliseconds)
+  }, 2000);
 };
 
 const updateTurnDisplay = function () {
@@ -58,11 +58,11 @@ const updateTurnDisplay = function () {
 };
 
 const updateGameScoresText = function (xText, oText) {
-  const xPersonElem = document.querySelector(".x__name");
-  const oPersonElem = document.querySelector(".o__name");
+  const xPersonEl = document.querySelector(".x__name");
+  const oPersonEl = document.querySelector(".o__name");
 
-  xPersonElem.textContent = xText;
-  oPersonElem.textContent = oText;
+  xPersonEl.textContent = xText;
+  oPersonEl.textContent = oText;
 };
 
 const updateIconBox = function (e) {
@@ -101,21 +101,17 @@ const updateIconBox = function (e) {
       gameSection.classList.remove("x-choice");
     }
   }
-
-  console.log(currentPlayer, userChoice, computerChoice);
-
-  // console.log(userChoice);
 };
 
 const winningCombinations = [
   [0, 1, 2],
   [3, 4, 5],
-  [6, 7, 8], // Rows
+  [6, 7, 8],
   [0, 3, 6],
   [1, 4, 7],
-  [2, 5, 8], // Columns
+  [2, 5, 8],
   [0, 4, 8],
-  [2, 4, 6], // Diagonals
+  [2, 4, 6],
 ];
 
 const checkWinner = function () {
@@ -143,25 +139,17 @@ const checkWinner = function () {
       winnerIcon.src = `assets/${icon}`;
       winLoseText.textContent = text;
       winnerText.classList.add(winnerClass);
-      console.log(winnerClass);
-      // cells[a].classList.add("winning-tile");
-      // cells[b].classList.add("winning-tile");
-      // cells[c].classList.add("winning-tile");
       if (currentPlayer !== userChoice) {
         disableCellClicks();
       }
-      // Show the modal
-      showHiddenContainers(modalBox);
-      // modalBox.style.opacity = "1";
-      // modalBox.style.visibility = "visible";
-      // // modalBox.style.transform = "translateY(0)";
-      // overlay.style.display = "block";
+      setTimeout(() => {
+        showHiddenContainers(modalBox);
+      }, 500);
 
       return true;
     }
   }
 
-  // No winner found, check if it's a tie
   const isBoardFull = Array.from(cells).every((cell) => {
     return (
       cell.classList.contains("game__tiles__x") ||
@@ -170,18 +158,10 @@ const checkWinner = function () {
   });
 
   if (isBoardFull) {
-    // It's a tie
-    // Perform any necessary actions for a tie game
     updateScores(null);
-
-    // Show the modal
-    // tiedModal.style.opacity = "1";
-    // tiedModal.style.visibility = "visible";
-    // tiedModal.style.transform = "translateY(0)";
-    // overlay.style.display = "block";
-    showHiddenContainers(tiedModal);
-
-    console.log("It's a tie!");
+    setTimeout(() => {
+      showHiddenContainers(tiedModal);
+    }, 500);
 
     return true;
   }
@@ -203,7 +183,9 @@ const checkWinnerVsPlayer = function () {
       winnerText.classList.add("winner__x");
 
       // Show the modal
-      showHiddenContainers(modalBox);
+      setTimeout(() => {
+        showHiddenContainers(modalBox);
+      }, 500);
 
       return true;
     }
@@ -220,13 +202,14 @@ const checkWinnerVsPlayer = function () {
       winnerText.classList.add("winner__o");
 
       // Show the modal
-      showHiddenContainers(modalBox);
+      setTimeout(() => {
+        showHiddenContainers(modalBox);
+      }, 500);
 
       return true;
     }
   }
 
-  // No winner found, check if it's a tie
   const isBoardFull = Array.from(cells).every((cell) => {
     return (
       cell.classList.contains("game__tiles__x") ||
@@ -235,14 +218,10 @@ const checkWinnerVsPlayer = function () {
   });
 
   if (isBoardFull) {
-    // It's a tie
-    // Perform any necessary actions for a tie game
     updateScores(null);
 
     // Show the modal
     showHiddenContainers(tiedModal);
-
-    console.log("It's a tie!");
 
     return true;
   }
@@ -272,12 +251,10 @@ const playVsCpu = function (e) {
   homeSection.style.display = "none";
   gameSection.style.display = "grid";
 
-  currentPlayer = userChoice === "x" ? "o" : "x"; // Set the current player based on the user's choice
+  currentPlayer = userChoice === "x" ? "o" : "x";
 
-  updateTurnDisplay(); // Update the turn display in the game header
-
+  updateTurnDisplay();
   if (currentPlayer === "x") {
-    // If the current player is "x", it's the computer's turn to play first
     computerMove();
   }
 
@@ -290,41 +267,32 @@ const computerMove = function () {
   showThinkingMessage();
   disableCellClicks();
 
-  // gameSection.classList.add("computer-turn");
   disableCellClicks();
   setTimeout(function () {
-    // Generate a random index
     const randomIndex = Math.floor(Math.random() * 9);
 
-    // Check if the selected cell is empty
     if (
       !cells[randomIndex].classList.contains("game__tiles__x") &&
       !cells[randomIndex].classList.contains("game__tiles__o")
     ) {
-      // Set the background image for the selected cell based on the current player
       cells[
         randomIndex
       ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
 
-      // Add the corresponding class to the selected cell
       cells[randomIndex].classList.add(
         `game__tiles__${currentPlayer}`,
         "game__tiles--filled",
-        "computer-icon" // Add the "computer-icon" class to indicate the computer's move
+        "computer-icon"
       );
 
-      // Call the checkWinner function to check if there is a winner
       if (checkWinner()) {
         return;
       }
 
-      // Switch the current player to the other symbol
       currentPlayer = currentPlayer === "x" ? "o" : "x";
 
-      // Update the turn display in the game header
       updateTurnDisplay();
 
-      // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
       if (userChoice === "o" && currentPlayer === "x") {
         computerMove();
       } else if (userChoice === "x" && currentPlayer === "o") {
@@ -334,11 +302,8 @@ const computerMove = function () {
       gameSection.classList.remove("computer-turn");
       enableCellClicks();
     } else {
-      // If the selected cell is not empty, try again
       computerMove();
     }
-    // gameSection.classList.remove("computer-turn");
-    // enableCellClicks(); // Enable cell clicks after a delay if it's the player's turn
   }, 2000);
 };
 
@@ -349,20 +314,15 @@ const playerMove = function () {
     userChoice &&
     !checkWinner()
   ) {
-    // Set the background image for the selected cell based on the current player (userChoice)
     this.style.backgroundImage = `url(assets/icon-${userChoice}.svg)`;
 
-    // Add the corresponding class to the selected cell
     this.classList.add(`game__tiles__${userChoice}`, "game__tiles--filled");
 
-    // Call the checkWinner function to check if there is a winner
     if (checkWinner()) return;
 
-    // Switch the current player to the other symbol
     currentPlayer = userChoice === "x" ? "o" : "x";
 
     updateTurnDisplay();
-    // Check if it's the computer's turn to move (currentPlayer is "x" or "o" based on user choice)
     if (userChoice === "o" && currentPlayer === "x") {
       computerMove();
     } else if (userChoice === "x" && currentPlayer === "o") {
@@ -388,22 +348,16 @@ const vsPlayerMove = function () {
     !this.classList.contains("game__tiles__o") &&
     !checkWinnerVsPlayer()
   ) {
-    // Set the background image for the selected cell based on the current player
     this.style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
 
-    // Add the corresponding class to the selected cell
     this.classList.add(`game__tiles__${currentPlayer}`, "game__tiles--filled");
 
-    // Call the checkWinner function to check if there is a winner
     if (checkWinnerVsPlayer()) return;
 
-    // Switch the current player to the other symbol
     currentPlayer = currentPlayer === "x" ? "o" : "x";
 
-    // Update the turn display in the game header
     updateTurnDisplay();
 
-    // Update gameSection class based on currentPlayer
     if (currentPlayer === "x") {
       gameSection.classList.remove("o-choice");
       gameSection.classList.add("x-choice");
@@ -429,10 +383,8 @@ const enableCellClicks = function () {
 };
 
 const resetGame = function () {
-  // Remove the event listener from the icon boxes
   selectIconBox.removeEventListener("click", updateIconBox);
 
-  // Reset game container to initial state
   cells.forEach((cell) => {
     cell.style.backgroundImage = "";
     cell.classList.remove(
@@ -442,25 +394,19 @@ const resetGame = function () {
     );
   });
 
-  // Store the current user choice before resetting
   const previousUserChoice = userChoice;
 
-  // Reset currentPlayer, userChoice, and computerChoice to default values
   currentPlayer = "x";
   userChoice = "x";
   computerChoice = "o";
 
-  // Update game section class based on default currentPlayer
   gameSection.classList.remove("o-choice");
   gameSection.classList.add("x-choice");
 
-  // Enable cell clicks for the user to play first
   enableCellClicks();
 
-  // Add event listener to icon boxes after resetting
   selectIconBox.addEventListener("click", updateIconBox);
 
-  // If the previous user choice was "O", restore it
   if (previousUserChoice === "o") {
     userChoice = "o";
     computerChoice = "x";
@@ -468,13 +414,11 @@ const resetGame = function () {
     gameSection.classList.add("o-choice");
   }
 
-  updateTurnDisplay(); // Update turn display
+  updateTurnDisplay();
 
   if (computerChoice === "x") {
-    computerMove(); // Computer plays first
+    computerMove();
   }
-
-  console.log(currentPlayer, userChoice, computerChoice);
 };
 
 const resetPlayerGame = function () {
@@ -493,7 +437,6 @@ const resetPlayerGame = function () {
   updateTurnDisplay();
 };
 const resetScores = function () {
-  // Reset scores
   const xScores = document.querySelector(".x__scores");
   const oScores = document.querySelector(".o__scores");
   const tiesScore = document.querySelector(".ties__score");
@@ -553,13 +496,9 @@ const handleWinOrLoseResult = function (e) {
       resetPlayerGame();
     }
 
-    resetScores(); // Reset scores
-    // window.location.href = "index.html";
+    resetScores();
     location.reload();
     hideContainers(modalBox);
-    // modalBox.style.opacity = "0";
-    // modalBox.style.visibility = "hidden";
-    // modalBox.style.transform = "translateY(100)";
   }
 
   if (nextRound) {
@@ -606,7 +545,6 @@ selectIconBox.addEventListener("click", updateIconBox);
 vsCpu.addEventListener("click", function () {
   playVsCpu();
 
-  // Add event listeners for vsCpu mode
   cells.forEach((cell) => {
     cell.addEventListener("click", playerMove);
   });
@@ -621,7 +559,6 @@ vsPlayer.addEventListener("click", function () {
   if (iconOBox.classList.contains("active__icon__box"))
     updateGameScoresText("x (p2)", "o (p1)");
 
-  // Add event listeners for vsPlayer mode
   cells.forEach((cell) => {
     cell.addEventListener("click", vsPlayerMove);
   });
