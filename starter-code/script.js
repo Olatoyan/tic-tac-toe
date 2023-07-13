@@ -31,6 +31,7 @@ const overlay = document.querySelector(".overlay");
 
 let currentPlayer = "x";
 let userChoice = "x";
+let computerChoice = "o";
 const showThinkingMessage = function () {
   thinkBox.style.display = "flex";
   gameSection.classList.add("computer-turn");
@@ -70,6 +71,8 @@ const updateIconBox = function (e) {
     iconOBox.classList.remove("active__icon__box");
 
     userChoice = "x";
+    computerChoice = "o";
+    currentPlayer = "x";
     updateGameScoresText("x (you)", "o (cpu)");
     gameSection.classList.remove("o-choice");
     gameSection.classList.add("x-choice");
@@ -79,10 +82,16 @@ const updateIconBox = function (e) {
     iconXBox.classList.remove("active__icon__box");
 
     userChoice = "o";
+    computerChoice = "x";
+    currentPlayer = "x";
     updateGameScoresText("x (cpu)", "o (you)");
     gameSection.classList.add("o-choice");
     gameSection.classList.remove("x-choice");
   }
+
+  console.log(currentPlayer, userChoice, computerChoice);
+
+  // console.log(userChoice);
 };
 
 const winningCombinations = [
@@ -272,6 +281,8 @@ const playerMove = function () {
   }
 };
 
+let r;
+
 // const computerMove = function () {
 //   if (checkWinner()) {
 //     return;
@@ -386,10 +397,11 @@ const playVsCpu = function (e) {
     computerMove();
   }
 };
-
 const resetGame = function () {
+  // Remove the event listener from the icon boxes
+  selectIconBox.removeEventListener("click", updateIconBox);
+
   // Reset game container to initial state
-  // currentPlayer = userChoice === "x" ? "o" : "x"; // Preserve the user's choice
   cells.forEach((cell) => {
     cell.style.backgroundImage = "";
     cell.classList.remove(
@@ -397,22 +409,41 @@ const resetGame = function () {
       "game__tiles__o",
       "game__tiles--filled"
     );
-  }); // Reset user choice if currentPlayer is not equal to userChoice
-  // if (currentPlayer !== userChoice) {
-  //   userChoice = currentPlayer;
-  // }
+  });
 
-  // Set currentPlayer as "x" (user)
+  // Store the current user choice before resetting
+  const previousUserChoice = userChoice;
+
+  // Reset currentPlayer, userChoice, and computerChoice to default values
   currentPlayer = "x";
+  userChoice = "x";
+  computerChoice = "o";
+
+  // Update game section class based on default currentPlayer
+  gameSection.classList.remove("o-choice");
+  gameSection.classList.add("x-choice");
+
+  // Enable cell clicks for the user to play first
+  enableCellClicks();
+
+  // Add event listener to icon boxes after resetting
+  selectIconBox.addEventListener("click", updateIconBox);
+
+  // If the previous user choice was "O", restore it
+  if (previousUserChoice === "o") {
+    userChoice = "o";
+    computerChoice = "x";
+    gameSection.classList.remove("x-choice");
+    gameSection.classList.add("o-choice");
+  }
 
   updateTurnDisplay(); // Update turn display
 
-  if (userChoice === "o") {
-    computerMove(); // Computer plays first if userChoice is "o"
-  } else {
-    enableCellClicks(); // Enable cell clicks for the user to play first
+  if (computerChoice === "x") {
+    computerMove(); // Computer plays first
   }
-  // updateTurnDisplay(); // Update turn display
+
+  console.log(currentPlayer, userChoice, computerChoice);
 };
 
 const resetScores = function () {
@@ -446,8 +477,8 @@ modalContent.addEventListener("click", function (e) {
   if (quitGame) {
     resetGame();
     resetScores(); // Reset scores
-    gameSection.style.display = "none";
-    homeSection.style.display = "flex";
+    // window.location.href = "index.html";
+    location.reload();
     hideContainers(modalBox);
     // modalBox.style.opacity = "0";
     // modalBox.style.visibility = "hidden";
@@ -485,8 +516,8 @@ tiedContainer.addEventListener("click", function (e) {
   if (quit) {
     resetGame();
     resetScores();
-    gameSection.style.display = "none";
-    homeSection.style.display = "flex";
+    location.reload();
+
     hideContainers(tiedModal);
   }
 
