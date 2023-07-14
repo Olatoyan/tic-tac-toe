@@ -34,11 +34,11 @@ let userChoice = "x";
 let computerChoice = "o";
 let gameMode;
 const showThinkingMessage = function () {
-  thinkBox.style.display = "flex";
+  thinkBox.style.opacity = "1";
   gameSection.classList.add("computer-turn");
 
   setTimeout(function () {
-    thinkBox.style.display = "none";
+    thinkBox.style.opacity = "0";
 
     if (currentPlayer === userChoice) {
       enableCellClicks();

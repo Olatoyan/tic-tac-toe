@@ -10,7 +10,8 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  display: none;
+  opacity: 0;
+  /* display: none; */
 }
 
 .think__message {
