@@ -269,41 +269,95 @@ const computerMove = function () {
 
   disableCellClicks();
   setTimeout(function () {
-    const randomIndex = Math.floor(Math.random() * 9);
+    let selectedCellIndex = -1;
 
-    if (
-      !cells[randomIndex].classList.contains("game__tiles__x") &&
-      !cells[randomIndex].classList.contains("game__tiles__o")
-    ) {
-      cells[
-        randomIndex
-      ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
+    for (const combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (
+        cells[a].classList.contains(`game__tiles__${currentPlayer}`) &&
+        cells[b].classList.contains(`game__tiles__${currentPlayer}`) &&
+        !cells[c].classList.contains("game__tiles--filled")
+      ) {
+        selectedCellIndex = c;
+        break;
+      } else if (
+        cells[b].classList.contains(`game__tiles__${currentPlayer}`) &&
+        cells[c].classList.contains(`game__tiles__${currentPlayer}`) &&
+        !cells[a].classList.contains("game__tiles--filled")
+      ) {
+        selectedCellIndex = a;
+        break;
+      } else if (
+        cells[a].classList.contains(`game__tiles__${currentPlayer}`) &&
+        cells[c].classList.contains(`game__tiles__${currentPlayer}`) &&
+        !cells[b].classList.contains("game__tiles--filled")
+      ) {
+        selectedCellIndex = b;
+        break;
+      }
+    }
 
-      cells[randomIndex].classList.add(
-        `game__tiles__${currentPlayer}`,
-        "game__tiles--filled",
-        "computer-icon"
+    if (selectedCellIndex === -1) {
+      for (const combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (
+          cells[a].classList.contains(`game__tiles__${userChoice}`) &&
+          cells[b].classList.contains(`game__tiles__${userChoice}`) &&
+          !cells[c].classList.contains("game__tiles--filled")
+        ) {
+          selectedCellIndex = c;
+          break;
+        } else if (
+          cells[b].classList.contains(`game__tiles__${userChoice}`) &&
+          cells[c].classList.contains(`game__tiles__${userChoice}`) &&
+          !cells[a].classList.contains("game__tiles--filled")
+        ) {
+          selectedCellIndex = a;
+          break;
+        } else if (
+          cells[a].classList.contains(`game__tiles__${userChoice}`) &&
+          cells[c].classList.contains(`game__tiles__${userChoice}`) &&
+          !cells[b].classList.contains("game__tiles--filled")
+        ) {
+          selectedCellIndex = b;
+          break;
+        }
+      }
+    }
+
+    if (selectedCellIndex === -1) {
+      do {
+        selectedCellIndex = Math.floor(Math.random() * 9);
+      } while (
+        cells[selectedCellIndex].classList.contains("game__tiles--filled")
       );
+    }
 
-      if (checkWinner()) {
-        return;
-      }
+    cells[
+      selectedCellIndex
+    ].style.backgroundImage = `url(assets/icon-${currentPlayer}.svg)`;
+    cells[selectedCellIndex].classList.add(
+      `game__tiles__${currentPlayer}`,
+      "game__tiles--filled",
+      "computer-icon"
+    );
 
-      currentPlayer = currentPlayer === "x" ? "o" : "x";
+    if (checkWinner()) {
+      return;
+    }
 
-      updateTurnDisplay();
+    currentPlayer = currentPlayer === "x" ? "o" : "x";
 
-      if (userChoice === "o" && currentPlayer === "x") {
-        computerMove();
-      } else if (userChoice === "x" && currentPlayer === "o") {
-        computerMove();
-      }
+    updateTurnDisplay();
 
-      gameSection.classList.remove("computer-turn");
-      enableCellClicks();
-    } else {
+    if (userChoice === "o" && currentPlayer === "x") {
+      computerMove();
+    } else if (userChoice === "x" && currentPlayer === "o") {
       computerMove();
     }
+
+    gameSection.classList.remove("computer-turn");
+    enableCellClicks();
   }, 2000);
 };
 
